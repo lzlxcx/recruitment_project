@@ -27,6 +27,10 @@ export default class Login extends Component {
     console.log(this.state)
   }
 
+  goRegister = () => {
+    //编程式路由导航（跳转）
+    this.props.history.replace('/register')
+  }
 
   render () {
     return (
