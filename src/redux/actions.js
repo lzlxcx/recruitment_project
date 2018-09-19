@@ -5,52 +5,95 @@
  */
 import {
   reqRegister,
-  reqLogin
+  reqLogin,
+  reqUpdateUser
 } from "../api"
 import {
   AUTH_SUCCESS,
-  ERROR_MSG
+  ERROR_MSG,
+  RECEIVE_USER,
+  RESET_USER
 } from "./action-types";
 
 //注册/登录成功的同步action
 const arthSuccess = (user) => ({type:AUTH_SUCCESS,data:user})
 //注册/登录失败的同步action
 const errorMsg = (msg) => ({type:ERROR_MSG,data:msg})
+//接收用户的同步action
+const receiveUser = (user) => ({type:RECEIVE_USER,data:user})
+//重置用户的同步action
+const reserUser = (msg) => ({type:RESET_USER,data:msg})
+
 
 //注册的异步action
-export function register({username,password,type}) {
-  return dispatch => {
+export function register({username,password,password2,type}) {
+
+  //前台表单验证
+  if (!username) { //此时本质是同步action
+    return errorMsg('请指定用户名')
+  } else if(!password) {
+    return errorMsg('请指定密码')
+  } else if (password2!=password) {
+    return errorMsg('密码必须一致')
+  } else if (!type) {
+    return errorMsg('请指定用户类型')
+  }
+
+  return async dispatch => {
     //发异步ajax请求注册
-    reqRegister({username,password,type}).then(response => {
-      const result = response.data  //返回 {code:0/1 ,msg:'',data:user}
-      if (result.code==0) { //成功
-        const user = result.data
-        //分发成功的同步action
-        dispatch(arthSuccess(user))
-      } else {    //失败
-        const msg = result.msg
-        //分发失败同步action
-        dispatch(errorMsg(msg))
-      }
-    })
+    const response = await reqRegister({username,password,password2,type})
+    const result = response.data  //返回 {code:0/1 ,msg:'',data:user}
+    if (result.code==0) { //成功
+      const user = result.data
+      //分发成功的同步action
+      dispatch(arthSuccess(user))
+    } else {    //失败
+      const msg = result.msg
+      //分发失败同步action
+      dispatch(errorMsg(msg))
+    }
   }
 }
 
 //登录的异步action
 export function login(username,password) {
-  return dispatch => {
+  return async dispatch => { //async用在await所在函数定义的左侧
+    //表单验证
+    if (!username) { //必须分发一个同步的action对象
+      return dispatch(errorMsg('请指定用户名'))  //return 代表结束
+    } else if (!password) {
+      return dispatch(errorMsg('请指定密码'))
+    }
+
     //发异步ajax请求登录
-    reqLogin({username,password}).then(response => {
-      const result = response.data
-      if (result.code==0) {
-        const user = result.data
-        //分发成功的同步action
-        dispatch(arthSuccess(user))
-      } else {
-        const msg = result.msg
-        //分发失败同步action
-        dispatch(errorMsg(msg))
-      }
-    })
+    const response = await reqLogin({username, password}) //response 是promise函数异步返回的数据
+    const result = response.data
+    if (result.code == 0) {
+      const user = result.data
+      //分发成功的同步action
+      dispatch(arthSuccess(user))
+    } else {
+      const msg = result.msg
+      //分发失败同步action
+      dispatch(errorMsg(msg))
+    }
+  }
+}
+
+/*
+* 异步更新用户
+* */
+
+export function updateUser(user) {
+  return async dispatch => {
+    const response = await reqUpdateUser(user)
+    const result = response.data
+    if (result.code === 0){
+      const user = result.data
+      dispatch(receiveUser(user))
+    } else {
+      const msg = result.data
+      dispatch(reserUser(msg))
+    }
   }
 }

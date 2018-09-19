@@ -17,3 +17,6 @@ export const reqRegister = ({username,password,type}) => ajax(BASE+'/register',{
 }*/
 //用两个参数传参 要求：传参顺序  如果用对象传参 要求：属性名必须一致
 export const reqLogin = (username,password) => ajax(BASE+'/login',{username,password},'POST')
+
+//请求更新用户接口
+export const reqUpdateUser = (user) => ajax(BASE+'/update',user,'POST')
