@@ -6,23 +6,28 @@
 import {
   reqRegister,
   reqLogin,
-  reqUpdateUser
+  reqUpdateUser,
+  reqUser,
+  reqUserList
 } from "../api"
 import {
   AUTH_SUCCESS,
   ERROR_MSG,
   RECEIVE_USER,
-  RESET_USER
+  RESET_USER,
+  RECEIVE_USER_LIST
 } from "./action-types";
 
 //注册/登录成功的同步action
-const arthSuccess = (user) => ({type:AUTH_SUCCESS,data:user})
+const authSuccess = (user) => ({type:AUTH_SUCCESS,data:user})
 //注册/登录失败的同步action
 const errorMsg = (msg) => ({type:ERROR_MSG,data:msg})
 //接收用户的同步action
 const receiveUser = (user) => ({type:RECEIVE_USER,data:user})
 //重置用户的同步action
-const reserUser = (msg) => ({type:RESET_USER,data:msg})
+export const resetUser = (msg) => ({type:RESET_USER,data:msg})
+//接收用户列表的同步action
+export const receiveUserList = (userList) => ({type:RECEIVE_USER_LIST,data:userList})
 
 
 //注册的异步action
@@ -46,7 +51,7 @@ export function register({username,password,password2,type}) {
     if (result.code==0) { //成功
       const user = result.data
       //分发成功的同步action
-      dispatch(arthSuccess(user))
+      dispatch(authSuccess(user))
     } else {    //失败
       const msg = result.msg
       //分发失败同步action
@@ -65,13 +70,15 @@ export function login(username,password) {
       return dispatch(errorMsg('请指定密码'))
     }
 
+
     //发异步ajax请求登录
-    const response = await reqLogin({username, password}) //response 是promise函数异步返回的数据
+    const response = await reqLogin(username, password) //response 是promise函数异步返回的数据
     const result = response.data
+    console.log(result.code)
     if (result.code == 0) {
       const user = result.data
       //分发成功的同步action
-      dispatch(arthSuccess(user))
+      dispatch(authSuccess(user))
     } else {
       const msg = result.msg
       //分发失败同步action
@@ -93,7 +100,37 @@ export function updateUser(user) {
       dispatch(receiveUser(user))
     } else {
       const msg = result.data
-      dispatch(reserUser(msg))
+      dispatch(resetUser(msg))
+    }
+  }
+}
+
+/*
+* 获取当前用户的异步action
+* */
+
+export function getUser() {
+  return async dispatch => {
+    const response = await reqUser()
+    const result = response.data
+    if (result.code === 0) {
+      dispatch(receiveUser(result.data))
+    } else {
+      dispatch(resetUser(result.msg))
+    }
+  }
+}
+
+/*
+* 获取用户列表的异步action
+* */
+export function getUserList(type) {
+  return async dispatch  => {
+    const response = await reqUserList(type)
+    const result = response.data
+    if (result.code === 0) {
+      const userList = result.data
+      dispatch(receiveUserList(userList))
     }
   }
 }

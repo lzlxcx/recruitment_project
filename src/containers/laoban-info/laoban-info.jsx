@@ -41,6 +41,7 @@ class LaobanInfo extends Component {
     return (
       <div>
         <NavBar>老板完善信息</NavBar>
+        <HeaderSelector setHeader={this.setHeader}/>
         <WingBlank>
           <List>
             <InputItem placeholder='招聘的职位' onChange={value => this.handleChange('post',value)}>招聘职位：</InputItem>

@@ -20,7 +20,7 @@ class Login extends Component {
     })
   }
 
-  //注册
+  //登录
   login = () => {
     //console.log(this.state)
     const {username,password} = this.state
@@ -61,9 +61,9 @@ class Login extends Component {
               密码:
             </InputItem>
             <WhiteSpace/>
-            <Button type='primary' onClick={this.register}>登&nbsp;&nbsp;录</Button>
+            <Button type='primary' onClick={this.login}>登&nbsp;&nbsp;录</Button>
             <WhiteSpace/>
-            <Button onClick={this.goLogin}>还没有账户</Button>
+            <Button onClick={this.goRegister}>还没有账户</Button>
           </List>
         </WingBlank>
       </div>

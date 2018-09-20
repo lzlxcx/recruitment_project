@@ -8,7 +8,10 @@ import {getRedirectPath} from '../utils'
 
 import {
   AUTH_SUCCESS,
-  ERROR_MSG, RECEIVE_USER, RESET_USER
+  ERROR_MSG,
+  RECEIVE_USER,
+  RESET_USER,
+  RECEIVE_USER_LIST
 } from "./action-types";
 
 //管理user数据
@@ -23,7 +26,7 @@ function user (state=initUser, action) {
   switch (action.type) {
     case AUTH_SUCCESS:
       const user = action.data
-      return {...state,redirectTo:getRedirectPath(user.type,user.header)}
+      return {...user,redirectTo:getRedirectPath(user.type,user.header)}
     case ERROR_MSG:
       const msg = action.data
       return {...state,msg}
@@ -36,9 +39,21 @@ function user (state=initUser, action) {
   }
 }
 
+//管理userList数据
+const initUserList = []
+function userList(state=initUserList,action) {
+  switch (action.type) {
+    case RECEIVE_USER_LIST:
+      return action.data
+    default:
+      return state
+  }
+}
+
 
 export default combineReducers({
-  user
+  user,
+  userList
 })
 
 /*
