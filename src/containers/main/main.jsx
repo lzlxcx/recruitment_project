@@ -14,6 +14,8 @@ import {getUser} from '../../redux/actions'
 import {getRedirectPath} from "../../utils";
 import NavFooter from '../../componnets/nav-footer/nav-footer'
 
+import Chat from '../chat/chat'
+
 /*
 主界面路由组件
  */
@@ -102,6 +104,9 @@ class Main extends Component {
           <Route path='/laoban' component={Laoban}/>
           <Route path='/message' component={Message}/>
           <Route path='/personal' component={Personal}/>
+
+          <Route path='/chat/:userid' component={Chat}/>
+
         </Switch>
         {currentNav ? <NavFooter navList={this.navList}/> : null}
       </div>
